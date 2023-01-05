@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href = "index.css"/>
     <title>Bookmark Manager</title>
 </head>
 <body>
     <main>
-    <section class = "topBar">
-        <input type = "text">link</input>
-        <input type = "name">name</input>
+    <!--User input portion of the page-->
+    <section class = "ui">
+        <span>Link </span><input type = "text" class = "link" placeholder = "link"></input>
+        <span>Name </span><input type = "name" class = "name" placeholder = "name"></input>
         <button class = "addBtn">+</button>
     </section>
-    <ul class = "list"></ul>
+
+    <!--List of bookmarks-->
+    <ul class = "bookmarks"></ul>
     </main>
     <script src="index.js"></script>
 </body>

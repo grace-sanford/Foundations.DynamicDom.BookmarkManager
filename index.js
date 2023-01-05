@@ -3,118 +3,103 @@
 //================================================
 
 
-//If we were to ADD a bookmark to the bookmark manger, here's how we would do it. This function won't actually add a bookmark until it's called in the event listener. Basically, create an array of objects representing all of the user's added bookmarks.
-const bookmarkManager = [];
-const addBookmark = (link, name) => {
-    const bookmark = {name: "link"}
-    bookmarkManager.push(bookmark)
-}
+// /**
+//  * Rough implementation of a React hook that maintains state
+//  * @param {*} initial the initial value of teh state 
+//  * @returns [getter, setter]
+//  */
+
+// const useState = (initial) => {
+
+//     //this is like `let bookshelf = bookData`, but we're putting it in a function; you can't access the treasure
+//     //chest directly, you can only use the keywords I gave you
+//     let closure = initial;
+//     const getState = () => closure;
+//     const setState = (update) => (closure = update);
+//     return [getState, setState];
+// };
+
+// //bookshelf refers to the closure
+// //setBookshelf updates the closure
+// //we're using the function useState to remember bookData
+// const [getBookshelf, setBookshelf] = useState([]);
 
 
-//If we were to REMOVE a bookmark from the bookmark manager, here's how we 
-//would do it. This function won't actually remove a bookmark until it's called
-//in the event listener.
+//Select DOM elements
+const bookmarkLink = document.querySelector(".link");
+const bookmarkName = document.querySelector(".name");
+const addBtn = document.querySelector(".addBtn")
+const bookmarks = document.querySelector(".bookmarks")
 
-const removeBookmark = (bookmarkManager, bookmark) => {
-    //Can you find the bookmark?
-    const idx = bookmarkManager.indexOf(bookmark);
-    return idx !== -1
-    ? //If the bookmark is found, remove it.
-    bookshelfManager.slice(0,idx).concat(bookshelfManager.slice(idx + 1))
-    : //Otherwise, it's the same book mark manager list
-    bookmarkManager;
+//Basically, use an array of objects to maintain all of the user's added inputs.
+
+const bookmarkData = [];
+
+/**
+ * `createBookmarkElement takes an object representing the user's input and an index 
+ * and return a correspoing html element 
+ */
+
+const createBookmarkElement = (bookmark, i) => {
+    //Create li list element
+    const li = document.createElement("li");
+    li.classList.add("bookmark");
+
+    //Create a link with the name
+    const a = document.createElement("a");
+    a.setAttribute("href", bookmark.link);
+    a.textContent = bookmark.name;
+    li.append(a)
+
+    //Remove btn
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "-";
+    removeBtn.addEventListener("click", () => {
+        //Remove link and re-render
+        bookmarkData.splice(i,1);
+        renderBookmarks();
+    });
+    li.prepend(removeBtn);
+    
+    return li;
 };
 
 
 //#endregion STATE MANAGEMENT
 
 
-
 //================================================
 //#region RENDERING
 //================================================
 
-////////////////------------RENDER BOOKMARKS--------------//////////////
-const renderBookmark = (bookmark) => {
+/**
+ * `renderBookmarks` creates a bookmark element for each bookmark in bookmarkData, and re-renders the screen.
+ */
 
-    //Select the add button that will add the bookmark with user input when clicked
-    const addBtn = document.querySelector(".addBtn")
-    addBtn.addEventListener("click", () => {
-        const li = document.createElement('li');
-
-        li.textContent = bookmark.name
-        li.href = bookmark.link
-
-        const bookmarkManager = getBookmarkManger();
-        const updateBookmarkManager = addBookmark(bookmarkManager, bookmark);
-        setBookmarkManager(updateBookmarkManager);
-
-        renderApp({
-            name: "Bookmark Manager",
-            bookmarkManager: getBookmarkManger()
-        });
-    });
-
-    //Add a button that will remove the bookmark when clicked
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "-";
-    removeBtn.addEventListener("click", () => {
-        const bookmarkManager = getBookmarkManger();
-        const updateBookmarkManager = removeBookmark(bookmarkManager, bookmark);
-        setBookmarkManager(updateBookmarkManager);
-
-        renderApp({
-            name: "Bookmark Manager",
-            bookmarkManager: getBookmarkManger()
-        });
-    });
-
-    li.prepend(removeBtn);
-
-    return li;
+const renderBookmarks = () => {
+    const bookmarkElements = bookmarkData.map(createBookmarkElement);
+    bookmarks.replaceChildren(...bookmarkElements);
 };
 
+/**
+ * `addBtn` Event Listener creates and then adds a new bookmark object to bookmarkData array when the addBtn is clicked, and then refresh the page again.
+ */
 
+addBtn.addEventListener("click", () => {
 
+    //const userInput = getBookmark();
 
+    const link = bookmarkLink.value;
+    const name = bookmarkName.value;
 
-
-/////////////////--------RENDER BOOKMARK MANAGER------/////////////
-const renderBookmarkManger = (bookmarkManager) => {
-    const ul = document.querySelector('list');
-
-    //We want to TRANSFORM the elements in the array of objects representing 
-    //all the user's added bookmarks into html elements in a list
-    const renderBookmarks = bookmarkManager.map(renderBookmark);
-
-    ul.replaceChildren(...renderBookmarks);
-
-    return ul;
-};
-
-
-
-
-
-
-////////////////-----------RENDER APP--------------//////////////////
-//Work backward: render the app first
-//render app takes an app and updates the page with the name
-//and the book mark manager page
-
-const renderApp = (app) => {
-    const main = document.querySelector('main');
-
-    const h1 = document.createElement('h1');
-    h1.textConent = app.name;
-
-    const renderBookmarkManger = renderBookmarkManger(app.bookmarkManager)
-    main.replaceChildren(h1, renderBookmarkManger);
-}
-
-renderApp({
-    name: "Bookmark Manager",
-    bookmarkManager: getBookmarkManger()
+    if (!link || !name){
+        console.log("No input. Please try again.")
+        return;
+    }
+    //add new object to the bookmarkData array
+    bookmarkData.push({ link, name });
+    renderBookmarks();
 });
 
 //#endregion RENDERING
